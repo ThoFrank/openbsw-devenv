@@ -10,6 +10,7 @@
     nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
     devenv.url = "github:cachix/devenv";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
+    treefmt.url = "github:numtide/treefmt";
   };
 
   nixConfig = {
@@ -50,6 +51,9 @@
             gdb
             clang-tools
             minicom
+            inputs.treefmt.packages."${system}".default
+            black
+            cmake-format
 
             # Documentation build
             (python3.withPackages (p: [

@@ -92,6 +92,20 @@
                 build-system = [ p.setuptools ];
                 pyproject = true;
               })
+              (p.buildPythonPackage rec {
+                pname = "dox_trace";
+                version = "3.0.0";
+                src = fetchPypi {
+                  inherit pname version;
+                  hash = "sha256-hZSTnrjk8EoLbnNWpt2j9z8SwW36JD1OuPVwqsY3OwU=";
+                };
+                prePatch = ''
+                substituteInPlace pyproject.toml \
+                    --replace-fail " >= 70.0.0" ""
+                '';
+                build-system = [ p.setuptools ];
+                pyproject = true;
+              })
             ]))
             plantuml
             

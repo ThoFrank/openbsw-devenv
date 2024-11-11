@@ -10,7 +10,7 @@
     nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
     devenv.url = "github:cachix/devenv";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
-    treefmt.url = "github:numtide/treefmt/v2.0.5";
+    treefmt.url = "github:numtide/treefmt/v2.1.0";
   };
 
   nixConfig = {

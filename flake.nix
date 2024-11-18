@@ -7,7 +7,7 @@
       flake = false;
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     devenv.url = "github:cachix/devenv";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     treefmt.url = "github:numtide/treefmt/v2.1.0";
@@ -49,7 +49,7 @@
             gcc-arm-embedded
             gcc
             gdb
-            clang-tools
+            llvmPackages_17.clang-tools
             minicom
             inputs.treefmt.packages."${system}".default
             black

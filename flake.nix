@@ -128,6 +128,21 @@
           scripts.bsw-connect-serial.exec = ''
             ${pkgs.minicom}/bin/minicom -D /dev/serial/by-id/usb-P_E_Microcomputer_Systems_Inc._OpenSDA_Hardware_SDAFDB36E1B-if00 -b 115200
           '';
+          scripts.verify.exec = ''
+            treefmt
+
+            rm -rf cmake-build-*
+
+            cmake -B cmake-build-unit-tests -S executables/unitTest -DBUILD_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+            cmake --build cmake-build-unit-tests -j
+            ctest --test-dir cmake-build-unit-tests -j
+
+            cmake -B cmake-build-posix -S executables/referenceApp
+            cmake --build cmake-build-posix --target app.referenceApp -j
+
+            cmake -B cmake-build-s32k148 -S executables/referenceApp -DBUILD_TARGET_PLATFORM="S32K148EVB" --toolchain ../../admin/cmake/ArmNoneEabi.cmake
+            cmake --build cmake-build-s32k148 --target app.referenceApp -j
+          '';
         };
 
 

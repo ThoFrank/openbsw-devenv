@@ -54,6 +54,7 @@
             inputs.treefmt.packages."${system}".default
             black
             cmake-format
+            ccache
 
             # Documentation build
             (python3.withPackages (p: [
@@ -111,6 +112,8 @@
             
             (pkgs.callPackage ./nix/gdb-server.nix { })
           ];
+
+          env.CMAKE_CXX_COMPILER_LAUNCHER = "ccache";
 
           scripts.gdb-server.exec = ''
             # TODO: document how to add udev rules

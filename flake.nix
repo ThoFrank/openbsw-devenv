@@ -48,7 +48,6 @@
             gnumake
             gcc-arm-embedded
             gcc
-            gdb
             llvmPackages_17.clang-tools
             minicom
             inputs.treefmt.packages."${system}".default
@@ -110,6 +109,13 @@
             ]))
             plantuml
             
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+            # linux only
+
+            pkgs.gdb
+
+            # gdb server in theory works on darwin, too
+            # but it's x86_64 only. Not sure how to nicely integrate that without nix complaining
             (pkgs.callPackage ./nix/gdb-server.nix { })
           ];
 

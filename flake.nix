@@ -30,6 +30,10 @@
       systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
       perSystem = { config, self', inputs', pkgs, system, ... }: {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
 
         devenv.shells.default = {
           devenv.root =
@@ -129,13 +133,7 @@
             ]))
             plantuml
             
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
-            # linux only
-
             pkgs.gdb
-
-            # gdb server in theory works on darwin, too
-            # but it's x86_64 only. Not sure how to nicely integrate that without nix complaining
             (pkgs.callPackage ./nix/gdb-server.nix { })
 
             # rust

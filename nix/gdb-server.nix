@@ -68,13 +68,15 @@ stdenv.mkDerivation rec{
     homepage = "https://www.pemicro.com/products/product_viewDetails.cfm?product_id=15320151";
     changelog = "https://www.pemicro.com/products/product_viewDetails.cfm?product_id=15320151&productTab=1000001";
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-    # license = licenses.unfree;
+    license = licenses.unfree;
     maintainers = [{
       name = "Thomas Frank";
       email = "thomas.frank@esrlabs.com";
       github = "ThoFrank";
     }];
-    platforms = [ "x86_64-darwin" "x86_64-linux" ];
+
+    # gdb server is x86_64 only. Not sure how to nicely integrate that with rosetta binfmt/qemu without nix complaining
+    platforms = [ "x86_64-darwin" "aarch64-darwin" "x86_64-linux" "aarch64-linux" ];
     mainProgram = "pegdbserver_console";
   };
 }

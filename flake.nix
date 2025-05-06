@@ -11,6 +11,10 @@
     devenv.url = "github:cachix/devenv";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     treefmt.url = "github:numtide/treefmt/v2.1.0";
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs = { nixpkgs.follows = "nixpkgs"; };
+    };
   };
 
   nixConfig = {
@@ -42,6 +46,19 @@
             # ./devenv-foo.nix
           ];
 
+          languages.rust = {
+            enable = true;
+            channel = "stable";
+            targets = [ "thumbv7em-none-eabihf" ];
+          };
+
+          languages.python = {
+            enable = true;
+            venv = {
+              enable = true;
+            };
+          };
+
           # https://devenv.sh/reference/options/
           packages = with pkgs; [
             cmake
@@ -49,11 +66,14 @@
             gcc-arm-embedded
             gcc
             llvmPackages_17.clang-tools
+            llvmPackages_19.clang#-unwrapped
+            libcxx
             minicom
             inputs.treefmt.packages."${system}".default
             black
             cmake-format
             ccache
+            can-utils
 
             # Documentation build
             (python3.withPackages (p: [
@@ -117,17 +137,22 @@
             # gdb server in theory works on darwin, too
             # but it's x86_64 only. Not sure how to nicely integrate that without nix complaining
             (pkgs.callPackage ./nix/gdb-server.nix { })
+
+            # rust
+            rust-cbindgen
+            rust-bindgen
           ];
 
           env.CMAKE_CXX_COMPILER_LAUNCHER = "ccache";
+          env.LIBCLANG_PATH = "${pkgs.llvmPackages_17.libclang.lib}/lib";
 
           scripts.gdb-server.exec = ''
             # TODO: document how to add udev rules
-            pegdbserver_console -device=NXP_S32K1xx_S32K148F2M0M11 -startserver -singlesession -serverport=7224 -gdbmiport=6224 -interface=OPENSDA -s8
+            pegdbserver_console -device=NXP_S32K1xx_S32K148F2M0M11 -startserver -serverport=7224 -gdbmiport=6224 -interface=OPENSDA -s8
           '';
           scripts.bsw-flash-s32k1.exec = ''
-            gdb-server &
-            sleep 1
+            # gdb-server &
+            # sleep 1
             gdb -batch \
               -ex 'file cmake-build-s32k148/application/app.referenceApp.elf' \
               -ex 'target remote localhost:7224' \
@@ -135,7 +160,7 @@
             wait
           '';
           scripts.bsw-connect-serial.exec = ''
-            ${pkgs.minicom}/bin/minicom -D /dev/serial/by-id/usb-P_E_Microcomputer_Systems_Inc._OpenSDA_Hardware_SDAFDB36E1B-if00 -b 115200
+            ${pkgs.minicom}/bin/minicom -R utf8 -D /dev/serial/by-id/usb-P_E_Microcomputer_Systems_Inc._OpenSDA_Hardware_SDAFDB36E1B-if00 -b 115200
           '';
           scripts.verify.exec = ''
             treefmt

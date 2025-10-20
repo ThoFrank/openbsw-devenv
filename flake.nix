@@ -8,11 +8,12 @@
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs_25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
     devenv.url = "github:cachix/devenv";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     treefmt.url = "github:numtide/treefmt/v2.1.0";
-    fenix = {
-      url = "github:nix-community/fenix";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
       inputs = { nixpkgs.follows = "nixpkgs"; };
     };
   };
@@ -70,7 +71,7 @@
             gnumake
             gcc-arm-embedded
             gcc
-            llvmPackages_17.clang-tools
+            (import inputs.nixpkgs_25_05 {inherit system;}).llvmPackages_17.clang-tools
             llvmPackages_19.clang#-unwrapped
             libcxx
             minicom
@@ -143,7 +144,7 @@
           ];
 
           env.CMAKE_CXX_COMPILER_LAUNCHER = "ccache";
-          env.LIBCLANG_PATH = "${pkgs.llvmPackages_17.libclang.lib}/lib";
+          env.LIBCLANG_PATH = "${pkgs.llvmPackages_19.libclang.lib}/lib";
 
           scripts.gdb-server.exec = ''
             # TODO: document how to add udev rules
